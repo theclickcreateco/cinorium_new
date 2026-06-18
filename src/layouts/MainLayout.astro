@@ -1,0 +1,123 @@
+---
+interface Props {
+  title: string;
+  categories?: string[];
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+}
+
+const { 
+  title, 
+  categories = ["Kitchen", "Storage", "Desk", "Living Room"],
+  description = "Handpicked home decor and organization finds to elevate your daily living space beautifully.",
+  image = "/images/default-og.jpg", // A clean fallback hero image
+  type = "website"
+} = Astro.props;
+
+import '../styles/global.css';
+
+// Dynamically generate the absolute URL for absolute SEO compliance
+const canonicalURL = new URL(Astro.url.pathname, "https://cinorium.com");
+---
+
+<!DOCTYPE html>
+<html lang="en" class="bg-white text-gray-900 selection:bg-amber-100">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonicalURL} />
+    
+    <title>{title} | CINORIUM</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:title" content={`${title} | CINORIUM`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={image} />
+    <meta property="og:site_name" content="CINORIUM" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": type === "article" ? "Article" : "CollectionPage",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": canonicalURL
+      },
+      "headline": title,
+      "description": description,
+      "image": image,
+      "publisher": {
+        "@type": "Organization",
+        "name": "CINORIUM",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://cinorium.com/logo.png"
+        }
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "CINORIUM Editorial Staff"
+      }
+    })} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: 'Plus Jakarta Sans', sans-serif; }
+      /* Utility class to hide scrollbars on the desktop/mobile horizontal navigation bar */
+      .scrollbar-none::-webkit-scrollbar { display: none; }
+      .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+  </head>
+  <body class="flex flex-col min-h-screen antialiased">
+    
+    <header class="border-b border-gray-50 sticky top-0 bg-white/90 backdrop-blur-md z-50 px-4 py-3 sm:py-4 sm:px-6">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+        
+        <a href="/" class="text-xl font-semibold tracking-[0.25em] text-gray-950 hover:opacity-80 transition py-1">
+          CINORIUM
+        </a>
+        
+        <nav class="w-full sm:w-auto flex items-center justify-start sm:justify-end space-x-5 overflow-x-auto scrollbar-none pb-2 sm:pb-0 text-[11px] sm:text-xs uppercase tracking-widest font-medium">
+          {categories.map((cat) => (
+            <a href={`/category/${cat.toLowerCase()}`} class="hover:text-gray-900 whitespace-nowrap transition py-1 text-gray-500 border-b-2 border-transparent hover:border-gray-900">
+              {cat}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-grow">
+      <slot />
+    </main>
+
+    <footer class="bg-gray-50 border-t border-gray-100 mt-20 px-4 py-12">
+      <div class="max-w-3xl mx-auto text-center space-y-6">
+        <div class="flex justify-center space-x-4">
+          <a href="#" class="text-gray-400 hover:text-red-600 transition text-sm flex items-center space-x-1">
+            <span>📌</span> <span class="text-xs uppercase tracking-wider font-medium">Follow on Pinterest</span>
+          </a>
+        </div>
+        
+        <p class="text-[11px] text-gray-400 leading-relaxed max-w-2xl mx-auto">
+          Cinorium is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.com. Amazon and the Amazon logo are trademarks of Amazon.com, Inc. or its affiliates.
+        </p>
+        
+        <p class="text-[10px] text-gray-300">
+          &copy; {new Date().getFullYear()} CINORIUM. All curation is independent and editorial.
+        </p>
+      </div>
+    </footer>
+
+  </body>
+</html>

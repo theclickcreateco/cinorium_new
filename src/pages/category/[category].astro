@@ -1,0 +1,73 @@
+---
+import { getCollection } from 'astro:content';
+import MainLayout from '../../layouts/MainLayout.astro';
+
+// 1. Generate URLs for each of your distinct active categories
+export async function getStaticPaths() {
+  const activeCategories = ["kitchen", "storage", "desk", "living room"];
+  
+  return activeCategories.map(cat => ({
+    params: { category: cat },
+    props: { categoryName: cat.charAt(0).toUpperCase() + cat.slice(1) }
+  }));
+}
+
+const { category } = Astro.params;
+const { categoryName } = Astro.props;
+
+// 2. Fetch all your product posts and filter down to match this exact route category
+const allPosts = await getCollection('posts');
+const filteredPosts = allPosts.filter(post => 
+  post.data.category.toLowerCase() === category.toLowerCase()
+);
+
+const activeCategories = ["Kitchen", "Storage", "Desk", "Living Room"];
+---
+
+<MainLayout title={`${categoryName} Collection`} categories={activeCategories}>
+  <div class="max-w-6xl mx-auto px-4 my-10 pb-20">
+    
+    <header class="text-center py-8 border-b border-gray-50 max-w-xl mx-auto mb-10">
+      <span class="text-[10px] text-gray-400 uppercase tracking-[0.2em] block mb-1">Collection Curation</span>
+      <h1 class="text-3xl font-light tracking-tight text-gray-900">{categoryName} Aesthetics</h1>
+      <p class="text-xs text-gray-400 font-light italic mt-1">
+        Showing all handpicked lookbook essentials for your {category.toLowerCase()} transformation.
+      </p>
+    </header>
+
+    {filteredPosts.length === 0 ? (
+      <div class="text-center py-20 text-gray-400 text-xs tracking-wide font-light bg-gray-50/50 rounded-xl max-w-md mx-auto border border-dashed border-gray-100">
+        ✨ New lookbook finds are currently compiling for this space. Check back soon!
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredPosts.map(post => (
+          <a href={`/${post.id || post.slug}`} class="group flex flex-col bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition duration-200">
+            <div class="aspect-square bg-gray-50 overflow-hidden border-b border-gray-50">
+              <img 
+                src={post.data.images[0]} 
+                alt={post.data.title} 
+                class="w-full h-full object-cover transition duration-500 group-hover:scale-102"
+                loading="lazy"
+              />
+            </div>
+            <div class="p-4 flex-grow flex flex-col justify-between">
+              <div>
+                <span class="text-[9px] font-medium uppercase tracking-widest text-amber-600 block mb-1">
+                  {post.data.isMultiProduct ? 'Listicle Edit' : 'Single Drop'}
+                </span>
+                <h3 class="text-sm font-medium text-gray-900 line-clamp-2 tracking-tight leading-snug">
+                  {post.data.title}
+                </h3>
+              </div>
+              <span class="text-[10px] text-gray-400 uppercase tracking-wider block mt-4 font-light">
+                View Lookbook &rarr;
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+
+  </div>
+</MainLayout>

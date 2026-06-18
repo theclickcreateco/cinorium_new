@@ -1,0 +1,109 @@
+---
+import { getCollection, render } from 'astro:content';
+import MainLayout from '../layouts/MainLayout.astro';
+import ProductCard from '../components/ProductCard.astro';
+
+// 1. Tell Astro which static URLs/slugs to generate based on your markdown files
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map(post => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { title, headline, category, images, amazonLink, bullets, microReview, isMultiProduct } = post.data;
+
+// 2. Render the markdown description text if you write extra paragraphs inside the file
+const { Content } = await render(post);
+
+// 3. Grab all posts except the current one to show as recommendations
+const allPostsForSuggestions = await getCollection('posts');
+const suggestions = allPostsForSuggestions.filter(p => p.id !== post.id).slice(0, 2);
+---
+
+<MainLayout 
+  title={title} 
+  description={`${headline}. Read our clean, curated guide on why this lookbook pick is perfect for your ${category.toLowerCase()} setup.`}
+  image={images[0]} 
+  type="article"
+>
+  <div class="max-w-md mx-auto my-6 px-4 pb-20">
+    
+    <div class="mb-6">
+      <a href="/" class="text-[10px] text-gray-400 uppercase tracking-widest hover:text-gray-900 transition">
+        &larr; Home
+      </a>
+      <span class="text-gray-300 mx-2">/</span>
+      <span class="text-[10px] text-amber-600 uppercase tracking-widest font-medium">{category}</span>
+    </div>
+
+    {!isMultiProduct ? (
+      
+      <ProductCard 
+        title={title}
+        headline={headline}
+        image={images[0]}
+        amazonLink={amazonLink}
+        bullets={bullets}
+        microReview={microReview}
+      />
+
+    ) : (
+      
+      /* FORMAT B: MULTI-PRODUCT VERTICAL STACK */
+      <div class="space-y-12">
+        <header class="text-center py-6 border-b border-gray-100 max-w-md mx-auto">
+          <h1 class="text-2xl font-light tracking-tight text-gray-900 mb-2">{title}</h1>
+          <p class="text-sm text-gray-400 font-light italic">"{headline}"</p>
+          
+          <div class="bg-gray-50/60 text-center py-2 px-3 rounded-md border border-gray-100/50 mt-4">
+            <p class="text-[10px] text-gray-400 leading-tight">
+              ✨ <strong class="text-gray-500 font-medium">Transparency Note:</strong> As an Amazon Associate, I earn from qualifying purchases at zero extra cost to you.
+            </p>
+          </div>
+        </header>
+
+        {post.data.products && post.data.products.map((item, index) => (
+          <ProductCard 
+            title={item.title}
+            image={item.image}
+            amazonLink={item.amazonLink}
+            bullets={item.bullets}
+            microReview={item.microReview}
+            itemNumber={index + 1}
+          />
+        ))}
+      </div>
+    )}
+
+    <div class="prose prose-sm font-light text-gray-500 mt-8 text-center px-4">
+      <Content />
+    </div>
+
+    {suggestions.length > 0 && (
+      <div class="mt-16 pt-8 border-t border-gray-100 max-w-md mx-auto">
+        <h3 class="text-xs font-semibold tracking-widest uppercase text-gray-400 text-center mb-6">Complete the Look</h3>
+        <div class="grid grid-cols-2 gap-4">
+          {suggestions.map(sugg => (
+            <a href={`/${sugg.id}`} class="group block text-center space-y-2">
+              <div class="aspect-square bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
+                <img 
+                  src={sugg.data.images[0]} 
+                  alt={sugg.data.title} 
+                  class="w-full h-full object-cover transition duration-300 group-hover:scale-103"
+                  loading="lazy"
+                />
+              </div>
+              <h4 class="text-[11px] font-medium text-gray-700 line-clamp-1 px-1 group-hover:text-gray-900 transition">
+                {sugg.data.title}
+              </h4>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+  </div>
+</MainLayout>

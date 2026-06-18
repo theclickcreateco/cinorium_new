@@ -1,17 +1,106 @@
 ---
+import { getCollection } from 'astro:content';
+import MainLayout from '../layouts/MainLayout.astro';
 
+// 1. Fetch all your product posts from markdown
+const allPosts = await getCollection('posts');
+
+// 2. Extract the absolute latest single product drop
+const latestDrop = allPosts.find(post => post.data.isLatest) || allPosts[0];
+
+// 3. Define your current active nav categories
+// Changing this list updates the header AND the homepage grid completely on its own!
+const activeCategories = ["Kitchen", "Storage", "Desk", "Living Room"];
+
+// Let's pair each category name with a fallback image (you can customize these filenames later)
+const categoryMetaData = [
+  { name: "Kitchen", image: "/images/cat-kitchen.jpg", tag: "Clean aesthetics" },
+  { name: "Storage", image: "/images/cat-storage.jpg", tag: "Smart organization" },
+  { name: "Desk", image: "/images/cat-desk.jpg", tag: "Minimal workspaces" },
+  { name: "Living Room", image: "/images/cat-living.jpg", tag: "Elevated spaces" }
+].filter(cat => activeCategories.includes(cat.name));
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<MainLayout title="Curated Home Decor & Organization" categories={activeCategories}>
+  
+  <section class="relative bg-gray-50 border-b border-gray-100 py-16 px-4 text-center sm:py-24">
+    <div class="max-w-3xl mx-auto space-y-4">
+      <span class="text-xs font-semibold tracking-[0.2em] text-gray-400 uppercase block">The Digital Lookbook</span>
+      <h1 class="text-3xl sm:text-5xl font-light tracking-tight text-gray-900 leading-tight">
+        Curated Aesthetics For A <span class="font-normal border-b border-amber-200">Functional Home</span>.
+      </h1>
+      <p class="text-sm sm:text-base text-gray-500 max-w-xl mx-auto font-light leading-relaxed">
+        Handpicked home decor and organization finds to elevate your space daily. No clutter, just design.
+      </p>
+    </div>
+  </section>
+
+  {latestDrop && (
+    <section class="max-w-4xl mx-auto my-12 px-4">
+      <div class="flex items-center space-x-2 mb-4">
+        <span class="h-2 w-2 rounded-full bg-amber-500 animate-pulse"></span>
+        <span class="text-xs font-medium tracking-widest uppercase text-gray-400">Just Added</span>
+      </div>
+      
+      <div class="border border-gray-100 rounded-xl p-4 sm:p-6 bg-gray-50/50 flex flex-col md:flex-row gap-6 items-center">
+        <div class="w-full md:w-1/2 aspect-square overflow-hidden rounded-lg bg-white shadow-inner">
+          <img 
+            src={latestDrop.data.images[0]} 
+            alt={latestDrop.data.title} 
+            class="w-full h-full object-cover"
+            loading="eager"
+          />
+        </div>
+        
+        <div class="w-full md:w-1/2 flex flex-col justify-between h-full py-2">
+          <div>
+            <span class="text-xs text-amber-600 uppercase tracking-wider font-medium block mb-1">
+              {latestDrop.data.category}
+            </span>
+            <h3 class="text-xl sm:text-2xl font-medium text-gray-900 mb-3 tracking-tight">
+              {latestDrop.data.title}
+            </h3>
+            <p class="text-sm text-gray-500 font-light mb-6 leading-relaxed">
+              {latestDrop.data.headline} Look forward to a beautifully structured daily ritual with this minimalist layout pick.
+            </p>
+          </div>
+          
+          <a href={`/${latestDrop.id}`} class="inline-flex items-center justify-center bg-gray-950 text-white text-xs uppercase tracking-widest font-medium py-3.5 px-6 rounded-md hover:bg-gray-800 transition text-center shadow-sm">
+            View Design Details →
+          </a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <hr class="max-w-6xl mx-auto border-gray-100 my-8" />
+
+  <section class="max-w-6xl mx-auto px-4 my-12">
+    <h2 class="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-6">Explore Collections</h2>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {categoryMetaData.map((cat) => (
+        <a href={`/category/${cat.name.toLowerCase()}`} class="relative group overflow-hidden aspect-[4/5] bg-gray-100 rounded-lg border border-gray-100 block">
+          <div class="absolute inset-0 bg-gray-200">
+            <img 
+              src={cat.image} 
+              alt={cat.name} 
+              class="w-full h-full object-cover transition duration-700 group-hover:scale-105" 
+              loading="lazy"
+            />
+          </div>
+          
+          <div class="absolute inset-0 bg-gradient-to-t from-gray-950/70 via-gray-950/20 to-transparent flex items-end p-5">
+            <div>
+              <h3 class="text-white text-lg font-medium tracking-wide">{cat.name}</h3>
+              <span class="text-[10px] text-gray-300 uppercase tracking-widest block mt-0.5 font-light">
+                {cat.tag} &rarr;
+              </span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+</MainLayout>
