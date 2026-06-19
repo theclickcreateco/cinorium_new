@@ -27,13 +27,35 @@ const { title, headline, image, amazonLink, bullets, microReview, itemNumber } =
     </p>
   </div>
 
-  <div class="relative aspect-square w-full bg-gray-50 overflow-hidden rounded-xl border border-gray-100">
-    <img 
-      src={image} 
-      alt={title} 
-      class="w-full h-full object-cover"
-      loading="lazy" 
-    />
+  <div class="relative aspect-square w-full bg-gray-50 rounded-xl border border-gray-100 overflow-hidden">
+    
+    {/* If images is passed as an array with multiple items, loop over them */}
+    {Array.isArray(Astro.props.images) && Astro.props.images.length > 1 ? (
+      <div class="flex overflow-x-auto snap-x snap-mandatory scrollbar-none h-full w-full">
+        {Astro.props.images.map((imgUrl, index) => (
+          <div class="w-full h-full flex-shrink-0 snap-start relative">
+            <img 
+              src={imgUrl} 
+              alt={`${title} view ${index + 1}`} 
+              class="w-full h-full object-cover"
+              loading={index === 0 ? "eager" : "lazy"} 
+            />
+            {/* Visual Indicator Pill for Users */}
+            <span class="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm text-white font-medium text-[9px] tracking-wider px-2 py-0.5 rounded-full select-none">
+              {index + 1} / {Astro.props.images.length}
+            </span>
+          </div>
+        ))}
+      </div>
+    ) : (
+      /* Fallback for old posts that only provide a single string image variable */
+      <img 
+        src={image} 
+        alt={title} 
+        class="w-full h-full object-cover"
+        loading="lazy" 
+      />
+    )}
   </div>
 
   <div class="space-y-3">

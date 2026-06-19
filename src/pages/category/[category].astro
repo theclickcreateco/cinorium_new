@@ -2,11 +2,19 @@
 import { getCollection } from 'astro:content';
 import MainLayout from '../../layouts/MainLayout.astro';
 
-// 1. Generate URLs for each of your distinct active categories
 export async function getStaticPaths() {
-  const activeCategories = ["kitchen", "storage", "desk", "living room"];
+  const allPosts = await getCollection('posts');
   
-  return activeCategories.map(cat => ({
+  // Dynamically extract every unique category from your markdown files
+  const uniqueCategories = [
+    ...new Set(
+      allPosts
+        .map(post => post.data.category?.toLowerCase())
+        .filter(Boolean)
+    )
+  ];
+  
+  return uniqueCategories.map(cat => ({
     params: { category: cat },
     props: { categoryName: cat.charAt(0).toUpperCase() + cat.slice(1) }
   }));
@@ -15,13 +23,15 @@ export async function getStaticPaths() {
 const { category } = Astro.params;
 const { categoryName } = Astro.props;
 
-// 2. Fetch all your product posts and filter down to match this exact route category
 const allPosts = await getCollection('posts');
 const filteredPosts = allPosts.filter(post => 
-  post.data.category.toLowerCase() === category.toLowerCase()
+  post.data.category?.toLowerCase() === category.toLowerCase()
 );
 
-const activeCategories = ["Kitchen", "Storage", "Desk", "Living Room"];
+// Dynamically generate the categories list for the navigation bar as well
+const activeCategories = [
+  ...new Set(allPosts.map(post => post.data.category).filter(Boolean))
+];
 ---
 
 <MainLayout title={`${categoryName} Collection`} categories={activeCategories}>

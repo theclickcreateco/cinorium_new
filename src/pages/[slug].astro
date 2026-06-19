@@ -3,7 +3,6 @@ import { getCollection, render } from 'astro:content';
 import MainLayout from '../layouts/MainLayout.astro';
 import ProductCard from '../components/ProductCard.astro';
 
-// 1. Tell Astro which static URLs/slugs to generate based on your markdown files
 export async function getStaticPaths() {
   const posts = await getCollection('posts');
   return posts.map(post => ({
@@ -15,12 +14,16 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { title, headline, category, images, amazonLink, bullets, microReview, isMultiProduct } = post.data;
 
-// 2. Render the markdown description text if you write extra paragraphs inside the file
 const { Content } = await render(post);
 
-// 3. Grab all posts except the current one to show as recommendations
+// 1. Grab all posts except the current one for suggestions
 const allPostsForSuggestions = await getCollection('posts');
 const suggestions = allPostsForSuggestions.filter(p => p.id !== post.id).slice(0, 2);
+
+// 2. DYNAMICALLY COMPILE ACTIVE NAV CATEGORIES FOR THIS PAGE
+const activeCategories = [
+  ...new Set(allPostsForSuggestions.map(p => p.data.category).filter(Boolean))
+];
 ---
 
 <MainLayout 
@@ -28,7 +31,7 @@ const suggestions = allPostsForSuggestions.filter(p => p.id !== post.id).slice(0
   description={`${headline}. Read our clean, curated guide on why this lookbook pick is perfect for your ${category.toLowerCase()} setup.`}
   image={images[0]} 
   type="article"
->
+  categories={activeCategories}  >
   <div class="max-w-md mx-auto my-6 px-4 pb-20">
     
     <div class="mb-6">
@@ -45,6 +48,7 @@ const suggestions = allPostsForSuggestions.filter(p => p.id !== post.id).slice(0
         title={title}
         headline={headline}
         image={images[0]}
+        images={images}
         amazonLink={amazonLink}
         bullets={bullets}
         microReview={microReview}
