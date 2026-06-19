@@ -12,7 +12,7 @@ bullets:
   - "Flameless top-down warming eliminates risks of fire, smoke, and black soot"
   - "Fully dimmable light control and integrated cycle timer for worry-free operation"
   - "Height-adjustable pole seamlessly accommodates various jar sizes and candle styles"
-isLatest: true
+isLatest: false
 microReview: "It blends classical elegance with a modern aesthetic, melting wax evenly while doubling as a gorgeous bedside nightlight."
 isMultiProduct: false
 ---
