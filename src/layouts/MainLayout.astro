@@ -77,6 +77,12 @@ const canonicalURL = new URL(Astro.url.pathname, "https://cinorium.com");
       /* Utility class to hide scrollbars on the desktop/mobile horizontal navigation bar */
       .scrollbar-none::-webkit-scrollbar { display: none; }
       .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+      @media (max-width: 640px) {
+    .mask-gradient {
+      mask-image: linear-gradient(to right, black 85%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    }
+  }
     </style>
   </head>
   <body class="flex flex-col min-h-screen antialiased">
@@ -88,9 +94,12 @@ const canonicalURL = new URL(Astro.url.pathname, "https://cinorium.com");
           CINORIUM
         </a>
         
-        <nav class="w-full sm:w-auto flex items-center justify-start sm:justify-end space-x-5 overflow-x-auto scrollbar-none pb-2 sm:pb-0 text-[11px] sm:text-xs uppercase tracking-widest font-medium">
+        <nav class="w-full sm:w-auto flex items-center justify-start sm:justify-end space-x-6 overflow-x-auto scrollbar-none flex-nowrap mask-gradient pb-2 sm:pb-0 text-[11px] sm:text-xs uppercase tracking-widest font-medium text-gray-500">
           {categories.map((cat) => (
-            <a href={`/category/${cat.toLowerCase()}`} class="hover:text-gray-900 whitespace-nowrap transition py-1 text-gray-500 border-b-2 border-transparent hover:border-gray-900">
+            <a 
+              href={`/category/${cat.toLowerCase()}`} 
+              class="hover:text-gray-900 whitespace-nowrap transition-all duration-200 py-1 border-b-2 border-transparent hover:border-gray-900 focus:text-gray-900 shrink-0"
+            >
               {cat}
             </a>
           ))}
