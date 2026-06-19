@@ -1,7 +1,7 @@
 ---
 title: "GODONLIF Adjustable Candle Warmer Lamp"
 headline: "Enjoy the Scent of Scented Candles Without an Open Flame"
-category: "Home Decor"
+category: "Fragrance & Wellness"
 images:
   [
     "https://m.media-amazon.com/images/I/810vcJJDrkL._AC_SL1500_.jpg",

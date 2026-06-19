@@ -27,28 +27,45 @@ const { title, headline, image, amazonLink, bullets, microReview, itemNumber } =
     </p>
   </div>
 
-  <div class="relative aspect-square w-full bg-gray-50 rounded-xl border border-gray-100 overflow-hidden">
+  <div class="relative aspect-square w-full bg-gray-50 rounded-xl border border-gray-100 overflow-hidden group/carousel">
     
-    {/* If images is passed as an array with multiple items, loop over them */}
     {Array.isArray(Astro.props.images) && Astro.props.images.length > 1 ? (
-      <div class="flex overflow-x-auto snap-x snap-mandatory scrollbar-none h-full w-full">
-        {Astro.props.images.map((imgUrl, index) => (
-          <div class="w-full h-full flex-shrink-0 snap-start relative">
-            <img 
-              src={imgUrl} 
-              alt={`${title} view ${index + 1}`} 
-              class="w-full h-full object-cover"
-              loading={index === 0 ? "eager" : "lazy"} 
-            />
-            {/* Visual Indicator Pill for Users */}
-            <span class="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm text-white font-medium text-[9px] tracking-wider px-2 py-0.5 rounded-full select-none">
-              {index + 1} / {Astro.props.images.length}
-            </span>
-          </div>
-        ))}
-      </div>
+      <>
+        <div 
+          id={`carousel-${title.replace(/\s+/g, '-').toLowerCase()}`}
+          class="carousel-container flex overflow-x-auto snap-x snap-mandatory scrollbar-none h-full w-full scroll-smooth"
+        >
+          {Astro.props.images.map((imgUrl, index) => (
+            <div class="w-full h-full flex-shrink-0 snap-start relative">
+              <img 
+                src={imgUrl} 
+                alt={`${title} view ${index + 1}`} 
+                class="w-full h-full object-cover"
+                loading={index === 0 ? "eager" : "lazy"} 
+              />
+            </div>
+          ))}
+        </div>
+
+        <button 
+          class="carousel-prev absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm hover:bg-white text-gray-800 p-2 rounded-full shadow-sm opacity-0 group-hover/carousel:opacity-100 transition hidden md:flex items-center justify-center w-8 h-8 z-10 text-xs font-bold"
+          aria-label="Previous image"
+        >
+          &larr;
+        </button>
+        <button 
+          class="carousel-next absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm hover:bg-white text-gray-800 p-2 rounded-full shadow-sm opacity-0 group-hover/carousel:opacity-100 transition hidden md:flex items-center justify-center w-8 h-8 z-10 text-xs font-bold"
+          aria-label="Next image"
+        >
+          &rarr;
+        </button>
+
+        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-sm text-white font-medium text-[9px] tracking-widest px-2.5 py-1 rounded-full select-none z-10">
+          <span class="carousel-index">1</span> / {Astro.props.images.length}
+        </div>
+      </>
     ) : (
-      /* Fallback for old posts that only provide a single string image variable */
+      /* Fallback for single image strings */
       <img 
         src={image} 
         alt={title} 
@@ -107,21 +124,46 @@ const { title, headline, image, amazonLink, bullets, microReview, itemNumber } =
 </article>
 
 <script>
-  // Script executes securely on client browser window
-  const buttons = document.querySelectorAll('.share-button');
-  
-  buttons.forEach(button => {
+  // --- 1. EXISTING COPY LINK LOGIC ---
+  const shareButtons = document.querySelectorAll('.share-button');
+  shareButtons.forEach(button => {
     button.addEventListener('click', () => {
       const link = button.getAttribute('data-link');
       if (link) {
         navigator.clipboard.writeText(link);
-        
         const originalText = button.innerHTML;
         button.innerHTML = "✅ Link Copied!";
-        setTimeout(() => {
-          button.innerHTML = originalText;
-        }, 2000);
+        setTimeout(() => button.innerHTML = originalText, 2000);
       }
+    });
+  });
+
+  // --- 2. NEW: DESKTOP DESKTOP NAVIGATION & SLIDE TRACKER LOGIC ---
+  const carousels = document.querySelectorAll('.group\\/carousel');
+  
+  carousels.forEach(wrapper => {
+    const container = wrapper.querySelector('.carousel-container') as HTMLElement;
+    const prevBtn = wrapper.querySelector('.carousel-prev');
+    const nextBtn = wrapper.querySelector('.carousel-next');
+    const indexDisplay = wrapper.querySelector('.carousel-index');
+    
+    if (!container || !indexDisplay) return;
+
+    // Arrow Clicking Logic
+    if (nextBtn && prevBtn) {
+      nextBtn.addEventListener('click', () => {
+        container.scrollLeft += container.offsetWidth;
+      });
+      prevBtn.addEventListener('click', () => {
+        container.scrollLeft -= container.offsetWidth;
+      });
+    }
+
+    // Dynamic Index Number Tracking on Scroll or Click
+    container.addEventListener('scroll', () => {
+      const slideWidth = container.offsetWidth;
+      const currentSlide = Math.round(container.scrollLeft / slideWidth) + 1;
+      indexDisplay.textContent = currentSlide.toString();
     });
   });
 </script>
