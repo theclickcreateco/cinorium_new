@@ -12,7 +12,7 @@ bullets:
   - "Crafted from genuine, heavy green fluorite crystal for a premium feel"
   - "Polished face paired with raw, natural edges offers stunning contrast"
   - "Sturdy and functional enough to hold up your heaviest hardcovers"
-isLatest: true
+isLatest: false
 microReview: "Each piece is entirely unique, catching the light beautifully and instantly elevating any dull bookshelf or home office desk."
 isMultiProduct: false
 ---
