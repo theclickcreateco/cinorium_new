@@ -12,7 +12,7 @@ bullets:
   - "Features dual light sources with an E26 top bulb and ambient fairy lights in the glass base"
   - "Beautifully crafted with a wooden-like metal frame and delicate boho rattan rope accents"
   - "Equipped with built-in USB-A and USB-C charging ports for convenient device charging"
-isLatest: false
+isLatest: true
 microReview: "The hidden fairy lights inside the clear glass base look exactly like lightning bugs in a jar, creating the ultimate rustic, cozy mood lighting."
 isMultiProduct: false
 ---
