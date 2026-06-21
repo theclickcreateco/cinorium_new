@@ -12,7 +12,7 @@ bullets:
   - "Features a sophisticated faux sandstone texture with an elegant layered arch design"
   - "Heavy-duty construction weighs 6.6 lbs to support large and heavy hardcovers easily"
   - "Crafted from durable, premium resin for a high-end, hand-carved appearance"
-isLatest: true
+isLatest: false
 microReview: "They look like custom museum pieces; the textured, brutalist arch design instantly anchors any modern aesthetic bookshelf."
 isMultiProduct: false
 ---

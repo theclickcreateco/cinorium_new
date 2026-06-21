@@ -12,7 +12,7 @@ bullets:
   - "Pottery-inspired natural white ceramic finish provides a clean, artisanal look"
   - "Classic classic urn silhouette topped with a matching off-white tapered drum shade"
   - "Equipped with a versatile 3-way rotary switch for easily customizable ambiance"
-isLatest: true
+isLatest: false
 microReview: "The textured, organic ceramic body gives it a beautifully handcrafted, high-end feel that brightens up any dark corner or nightstand even when it’s turned off."
 isMultiProduct: false
 ---

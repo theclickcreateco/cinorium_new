@@ -12,7 +12,7 @@ bullets:
   - "Wireless, rechargeable 5200mAh battery-powered bulbs provide days of cordless glow"
   - "Elegant brushed gold finish adds a touch of mid-century modern sophistication"
   - "Includes a convenient remote control with 10 vibrant color choices and full dimming capabilities"
-isLatest: true
+isLatest: false
 microReview: "They bring immediate architectural warmth to drywalled hallways or bedside setups without paying for an expensive electrician."
 isMultiProduct: false
 ---

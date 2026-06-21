@@ -12,7 +12,7 @@ bullets:
   - "Stunning 23-inch distressed ceramic jar base offers a vintage, weathered look"
   - "Premium ivory tapered fabric drum shade beautifully softens and diffuses light"
   - "Versatile 3-way rotary switch allows for easily adjustable mood lighting"
-isLatest: true
+isLatest: false
 microReview: "The textured, earthy finish gives it a high-end artisanal look that adds instant character to any bedside table or entryway console."
 isMultiProduct: false
 ---
